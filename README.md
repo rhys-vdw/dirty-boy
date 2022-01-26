@@ -7,7 +7,7 @@ Unity editor utility to manage dirty status of assets.
 ### OpenUPM
 
 ```
-openupm add com.nomnom.project-window-extensions
+openupm add computer.rhys.dirty-boy
 ```
 
 ### Package Manager

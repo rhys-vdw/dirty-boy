@@ -1,0 +1,22 @@
+{
+  "name": "computer.rhys.dirty-boy",
+  "version": "0.0.0",
+  "displayName": "Dirty Boy",
+  "description": "Editor utility to manage dirty status of assets",
+  "unity": "2020.3",
+  "unityRelease": "21f1",
+  "documentationUrl": "https://github.com/rhys-vdw/dirty-boy",
+  "licensesUrl": "https://choosealicense.com/licenses/mit/",
+  "dependencies": {},
+  "devDependencies": {},
+  "samples": [],
+  "keywords": [
+    "dirty asset"
+  ],
+  "author": {
+    "name": "Rhys van der Waerden",
+    "email": "rhys.vdw@gmail.com",
+    "url": "https://github.com/rhys-vdw/dirty-boy"
+  },
+  "type": "tool"
+}

@@ -1,31 +1,54 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEditorInternal;
 
-// Create a new type of Settings Asset.
+// Based on:
+// https://github.com/inkle/ink-unity-integration/blob/9fcec002bf7220fac6572b73b8d8b2838927605f/Packages/Ink/Editor/Core/Ink%20Settings/InkSettings.cs
 namespace DirtyBoy {
   internal class DirtyBoySettings : ScriptableObject {
-    const string Path = "Assets/" + nameof(DirtyBoySettings) + ".asset";
-
     [SerializeField] internal bool _enableReserializeWatcher = false;
 
-    internal static DirtyBoySettings GetOrCreateSettings() {
-      var settings = AssetDatabase.LoadAssetAtPath<DirtyBoySettings>(Path);
-      if (settings == null)
-      {
-        settings = ScriptableObject.CreateInstance<DirtyBoySettings>();
-        settings._enableReserializeWatcher = false;
-        AssetDatabase.CreateAsset(settings, Path);
-        AssetDatabase.SaveAssets();
+    static string AbsolutePath => Path.GetFullPath(
+      Path.Combine(Application.dataPath, "..", "ProjectSettings", nameof(DirtyBoySettings) + ".asset")
+    );
+
+    static DirtyBoySettings _instance = null;
+
+    public static DirtyBoySettings Instance {
+      get {
+        if (_instance == null) {
+          _instance = LoadOrCreate();
+        }
+        return _instance;
       }
-      return settings;
     }
 
-    internal static SerializedObject GetSerializedSettings() =>
-      new SerializedObject(GetOrCreateSettings());
+    static DirtyBoySettings LoadOrCreate() {
+      var objects = InternalEditorUtility.LoadSerializedFileAndForget(AbsolutePath);
+      var instance = null as DirtyBoySettings;
+      if (objects.Length != 0) {
+        // May become null if invalid.
+        instance = objects[0] as DirtyBoySettings;
+      }
+      if (instance == null) {
+        instance = ScriptableObject.CreateInstance<DirtyBoySettings>();
+      }
+      instance.Save();
+      return instance;
+    }
+
+    public static SerializedObject GetSerializedSettings() =>
+      new SerializedObject(Instance);
+
+    public void Save() {
+      InternalEditorUtility.SaveToSerializedFileAndForget(
+        new [] { this },
+        AbsolutePath,
+        true
+      );
+    }
   }
 
   static class DirtyBoySettingsProvider
@@ -39,22 +62,27 @@ namespace DirtyBoy {
     [SettingsProvider]
     public static SettingsProvider CreateMyCustomSettingsProvider() =>
       new SettingsProvider("Project/Dirty Boy", SettingsScope.Project) {
-        // By default the last token of the path is used as display name if no label is provided.
-        // label = "Dirty Boy",
-        // Create the SettingsProvider and initialize its drawing (IMGUI) function in place:
         guiHandler = searchContext => {
-            var settings = DirtyBoySettings.GetSerializedSettings();
-            EditorGUILayout.HelpBox(ReserializeWatcherMessage, MessageType.Info);
-            EditorGUIUtility.labelWidth = 300; 
-            EditorGUILayout.PropertyField(
-              settings.FindProperty(nameof(DirtyBoySettings._enableReserializeWatcher)),
-              new GUIContent("Reserialize assets on script change")
-            );
+          EditorGUI.BeginChangeCheck();
+
+          var settings = DirtyBoySettings.GetSerializedSettings();
+          EditorGUILayout.HelpBox(ReserializeWatcherMessage, MessageType.Info);
+          EditorGUIUtility.labelWidth = 300; 
+          EditorGUILayout.PropertyField(
+            settings.FindProperty(nameof(DirtyBoySettings._enableReserializeWatcher)),
+            new GUIContent("Reserialize assets on script change")
+          );
+
+          if (EditorGUI.EndChangeCheck()) {
             settings.ApplyModifiedProperties();
+            ((DirtyBoySettings) settings.targetObject).Save();
+          }
         },
 
-        // Populate the search keywords to enable smart search filtering and label highlighting:
-        keywords = new HashSet<string> { "reserialize", "prefab", "scriptable", "scriptableObjet", "asset" }
+        // Support smart search filtering and label highlighting.
+        keywords = new HashSet<string> {
+          "reserialize", "prefab", "scriptable", "scriptableObjet", "asset", "dirty"
+        }
       };
   }
 }

@@ -10,7 +10,7 @@ namespace DirtyBoy {
       string[] movedAssets,
       string[] movedFromAssetPaths
     ) {
-      if (!DirtyBoySettings.GetOrCreateSettings()._enableReserializeWatcher) {
+      if (!DirtyBoySettings.Instance._enableReserializeWatcher) {
         return;
       }
 

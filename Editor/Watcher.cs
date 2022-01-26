@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Text;
 using System.Collections.Generic;
 
 namespace DirtyBoy {

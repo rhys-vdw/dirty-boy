@@ -19,12 +19,10 @@ namespace DirtyBoy {
         if (scriptClass == null) continue;
         if (typeof(UnityEngine.Object).IsAssignableFrom(scriptClass)) {
           var objects = Resources.FindObjectsOfTypeAll(scriptClass);
-          if (objects.Length > 0) {
-            foreach (var obj in objects) {
-              if (EditorUtility.IsPersistent(obj)) {
-                var assetPath = AssetDatabase.GetAssetPath(obj);
-                reserializePaths.Add(assetPath);
-              }
+          foreach (var obj in objects) {
+            if (EditorUtility.IsPersistent(obj)) {
+              var assetPath = AssetDatabase.GetAssetPath(obj);
+              reserializePaths.Add(assetPath);
             }
           }
         }

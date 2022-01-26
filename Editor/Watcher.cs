@@ -21,18 +21,9 @@ namespace DirtyBoy {
           var objects = Resources.FindObjectsOfTypeAll(scriptClass);
           if (objects.Length > 0) {
             foreach (var obj in objects) {
-              var component = obj as Component;
-              if (component != null && PrefabUtility.IsPartOfPrefabAsset(component)) {
-                Debug.Log("persistent? " + EditorUtility.IsPersistent(component));
-                var prefab = component.transform.root.gameObject;
-                var prefabPath = AssetDatabase.GetAssetPath(prefab);
-                EditorUtility.SetDirty(prefab);
-                reserializePaths.Add(prefabPath);
-              } else if (EditorUtility.IsPersistent(obj)) {
+              if (EditorUtility.IsPersistent(obj)) {
                 var assetPath = AssetDatabase.GetAssetPath(obj);
-                if (!string.IsNullOrEmpty(assetPath)) {
-                  reserializePaths.Add(assetPath);
-                }
+                reserializePaths.Add(assetPath);
               }
             }
           }

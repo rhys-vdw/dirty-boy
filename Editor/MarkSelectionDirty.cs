@@ -8,6 +8,7 @@ namespace DirtyBoy {
     [MenuItem("Assets/Mark dirty")]
     public static void Command() {
       foreach (var obj in Selection.objects) {
+        Debug.Log(obj.GetType());
         EditorUtility.SetDirty(obj);
       }
       Debug.Log($"Marked {Selection.objects.Length} objects dirty");

@@ -10,6 +10,10 @@ namespace DirtyBoy {
       string[] movedAssets,
       string[] movedFromAssetPaths
     ) {
+      if (!DirtyBoySettings.GetOrCreateSettings()._enableReserializeWatcher) {
+        return;
+      }
+
       var reserializePaths = new List<string>();
       foreach (string path in importedAssets) {
         var script = (MonoScript) AssetDatabase.LoadAssetAtPath(path, typeof(MonoScript));

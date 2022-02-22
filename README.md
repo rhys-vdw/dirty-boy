@@ -26,7 +26,7 @@ Right click on any asset or GameObject and select "Mark Dirty" or "Force Reseria
 
 ![Usage](./Assets~/usage.png)
 
-Saving the project after marking as object dirty will cause Unity to reserialize it.
+Saving the project after marking an object dirty will cause Unity to reserialize it.
 
 ### ScriptableObject script watcher
 

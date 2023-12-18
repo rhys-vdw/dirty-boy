@@ -9,6 +9,9 @@ namespace DirtyBoy {
       string[] movedAssets,
       string[] movedFromAssetPaths
     ) {
+      if (Application.isBatchMode) {
+        return;
+      }
       foreach (string path in importedAssets) {
         var script = (MonoScript) AssetDatabase.LoadAssetAtPath(path, typeof(MonoScript));
         if (script == null) continue;
